@@ -2,6 +2,7 @@ package riskyken.armourersWorkshop.client.gui;
 
 import java.awt.Color;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.BitSet;
 
 import org.apache.logging.log4j.Level;
@@ -20,17 +21,16 @@ import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 import riskyken.armourersWorkshop.client.gui.controls.GuiCheckBox;
+import riskyken.armourersWorkshop.client.lib.LibGuiResources;
 import riskyken.armourersWorkshop.common.data.PlayerPointer;
 import riskyken.armourersWorkshop.common.inventory.ContainerSkinWardrobe;
 import riskyken.armourersWorkshop.common.inventory.slot.SlotHidable;
-import riskyken.armourersWorkshop.common.lib.LibModInfo;
 import riskyken.armourersWorkshop.common.network.PacketHandler;
 import riskyken.armourersWorkshop.common.network.messages.client.MessageClientSkinWardrobeUpdate;
 import riskyken.armourersWorkshop.common.skin.EquipmentWardrobeData;
@@ -41,8 +41,9 @@ import riskyken.armourersWorkshop.utils.ModLogger;
 @SideOnly(Side.CLIENT)
 public class GuiSkinWardrobe extends GuiContainer {
 
-    private static final ResourceLocation texture = new ResourceLocation(LibModInfo.ID.toLowerCase(), "textures/gui/customArmourInventory.png");
-
+    private static final ResourceLocation TEXTURE1 = new ResourceLocation(LibGuiResources.WARDROBE_1);
+    private static final ResourceLocation TEXTURE2 = new ResourceLocation(LibGuiResources.WARDROBE_2);
+    
     private static int activeTab = 0;
     private static final int TAB_MAIN = 0;
     private static final int TAB_OVERRIDE = 1;
@@ -97,8 +98,8 @@ public class GuiSkinWardrobe extends GuiContainer {
             this.limitLimbs = equipmentWardrobeData.limitLimbs;
         }
         
-        this.xSize = 256;
-        this.ySize = 256;
+        this.xSize = 320;
+        this.ySize = 240;
     }
 
     @Override
@@ -210,7 +211,7 @@ public class GuiSkinWardrobe extends GuiContainer {
         for (int i = 0; i < inventorySlots.inventorySlots.size(); i++) {
             Slot slot = (Slot) inventorySlots.inventorySlots.get(i);
             if (slot instanceof SlotHidable) {
-                ((SlotHidable)slot).setVisible(tabNumber == TAB_MAIN);
+                //((SlotHidable)slot).setVisible(tabNumber == TAB_MAIN);
             }
         }
     }
@@ -257,7 +258,7 @@ public class GuiSkinWardrobe extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         //Title label.
-        GuiHelper.renderLocalizedGuiName(this.fontRendererObj, this.xSize, "equipmentWardrobe");
+        //GuiHelper.renderLocalizedGuiName(this.fontRendererObj, this.xSize, "equipmentWardrobe");
         
         if (activeTab == TAB_SKIN) {
             String labelSkinColour = GuiHelper.getLocalizedControlName("equipmentWardrobe", "label.skinColour");
@@ -271,19 +272,33 @@ public class GuiSkinWardrobe extends GuiContainer {
         }
         
         //Player inventory label.
-        this.fontRendererObj.drawString(I18n.format("container.inventory", new Object[0]), 54, this.ySize - 96 + 2, 4210752);
+        //this.fontRendererObj.drawString(I18n.format("container.inventory", new Object[0]), 54, this.ySize - 96 + 2, 4210752);
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float p_146976_1_, int mouseX, int mouseY) {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(texture);
+        GL11.glColor4f(1F, 1F, 1.0F, 1.0F);
+        
+        int center = width / 2;
+        int trueLeft = center - 320 / 2;
         
         //Top half of GUI. (active tab)
-        this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, 167);
+        this.mc.getTextureManager().bindTexture(TEXTURE1);
+        this.drawTexturedModalRect(trueLeft, this.guiTop, 0, 0, 212, 240);
+        
+        this.mc.getTextureManager().bindTexture(TEXTURE2);
+        this.drawTexturedModalRect(trueLeft + 212, this.guiTop, 0, 0, 108, 240);
+        
+        
+        if (mouseX > trueLeft & mouseX < trueLeft + 108) {
+            drawRect(trueLeft, guiTop, trueLeft + 108, guiTop + 240, 0x55FFFFFF);
+            ArrayList<String> lines = new ArrayList<String>();
+            lines.add("Dressing");
+            drawHoveringText(lines, mouseX, mouseY, fontRendererObj);
+        }
         
         //Bottom half of GUI. (player inventory)
-        this.drawTexturedModalRect(this.guiLeft + 45, this.guiTop + 167, 45, 167, 178, 89);
+        //this.drawTexturedModalRect(this.guiLeft + 45, this.guiTop + 167, 45, 167, 178, 89);
         
         //Active tab image
         int tabImageX = 0;
@@ -293,7 +308,7 @@ public class GuiSkinWardrobe extends GuiContainer {
         int tabXPos = this.guiLeft;
         int tabYPos = this.guiTop + 9;
         tabYPos += activeTab * 21;
-        this.drawTexturedModalRect(tabXPos, tabYPos, tabImageX, tabImageY, tabImageWidth, tabImageHeight);
+        //this.drawTexturedModalRect(tabXPos, tabYPos, tabImageX, tabImageY, tabImageWidth, tabImageHeight);
         
         int sloImageSize = 18;
         
@@ -308,12 +323,14 @@ public class GuiSkinWardrobe extends GuiContainer {
         }
         
         if (this.activeTab == TAB_MAIN) {
+            /*
             for (int i = 0; i < inventorySlots.inventorySlots.size(); i++) {
                 Slot slot = (Slot) inventorySlots.inventorySlots.get(i);
                 this.drawTexturedModalRect(this.guiLeft + slot.xDisplayPosition - 1,
                         this.guiTop + slot.yDisplayPosition - 1,
                         238, 194, sloImageSize, sloImageSize);
             }
+            */
             //this.drawTexturedModalRect(this.guiLeft + 87, this.guiTop + 17, 18, 173, sloImageSize, 56);
             //this.drawTexturedModalRect(this.guiLeft + 87, this.guiTop + 74, 0, 192, sloImageSize, 37);
             //this.drawTexturedModalRect(this.guiLeft + 68, this.guiTop + 112, 0, 173, sloImageSize, sloImageSize);
@@ -369,6 +386,7 @@ public class GuiSkinWardrobe extends GuiContainer {
             float skinB = (float) skinColour.getBlue() / 255;
             
             //Skin colour display
+            /*
             this.drawTexturedModalRect(this.guiLeft + 90, this.guiTop + 30, 242, 180, 14, 14);
             GL11.glColor4f(skinR, skinG, skinB, 1F);
             this.drawTexturedModalRect(this.guiLeft + 91, this.guiTop + 31, 243, 181, 12, 12);
@@ -377,27 +395,37 @@ public class GuiSkinWardrobe extends GuiContainer {
             float hairR = (float) hairColour.getRed() / 255;
             float hairG = (float) hairColour.getGreen() / 255;
             float hairB = (float) hairColour.getBlue() / 255;
+            */
             
             //Hair colour display
+            /*
             this.drawTexturedModalRect(this.guiLeft + 90, this.guiTop + 82, 242, 180, 14, 14);
             GL11.glColor4f(hairR, hairG, hairB, 1F);
             this.drawTexturedModalRect(this.guiLeft + 91, this.guiTop + 83, 243, 181, 12, 12);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            */
         } else {
             //3D player preview
-            int boxX = this.guiLeft + 57;
-            int boxY = this.guiTop + 95;
+            
+            int boxX = center;
+            int boxY = this.height / 2 + 90;
             float lookX = boxX - mouseX;
             float lookY = boxY - 50 - mouseY;
             GL11.glPushMatrix();
             GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
             GL11.glTranslatef(boxX, boxY, 50);
             GL11.glRotatef(-20, 1, 0, 0);
-            GL11.glRotatef(playerRotation, 0, 1, 0);
+            //GL11.glRotatef(playerRotation, 0, 1, 0);
             GL11.glTranslatef(0, 0, -50);
-            GuiInventory.func_147046_a(0, 0, 35, 0, 0, this.mc.thePlayer);
+            GuiInventory.func_147046_a(0, 0, 45, lookX, lookY + 30, this.mc.thePlayer);
+            
+            GL11.glTranslatef(0, 10, 250);
+            GL11.glRotatef(180F, 0, 1, 0);
+            GuiInventory.func_147046_a(0, 0, 50, -lookX, lookY, this.mc.thePlayer);
+            
             GL11.glPopAttrib();
             GL11.glPopMatrix();
+            
         }
 
         lastMouseX = mouseX;
