@@ -20,6 +20,7 @@ public class Rectangle3D implements IRectangle3D {
         this.depth = depth;
     }
     
+    @Override
     public void setX(int x) {
         this.x = x;
     }
@@ -29,6 +30,7 @@ public class Rectangle3D implements IRectangle3D {
         return this.x;
     }
     
+    @Override
     public void setY(int y) {
         this.y = y;
     }
@@ -38,6 +40,7 @@ public class Rectangle3D implements IRectangle3D {
         return this.y;
     }
     
+    @Override
     public void setZ(int z) {
         this.z = z;
     }

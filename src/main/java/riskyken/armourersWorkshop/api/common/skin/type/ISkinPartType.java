@@ -45,6 +45,13 @@ public interface ISkinPartType {
     public IPoint3D getOffset();
     
     /**
+     * This is used when rendering a skin as an item.
+     * @return
+     */
+    @SideOnly(Side.CLIENT)
+    public IPoint3D getItemRenderOffset();
+    
+    /**
      * 
      * @param scale Normally 0.0625F.
      * @param showSkinOverlay

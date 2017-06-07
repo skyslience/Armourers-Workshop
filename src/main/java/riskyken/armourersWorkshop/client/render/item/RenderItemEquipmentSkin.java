@@ -9,7 +9,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.client.IItemRenderer;
-import riskyken.armourersWorkshop.client.render.ItemStackRenderHelper;
+import riskyken.armourersWorkshop.client.helper.SkinScaledRenderHelper;
 import riskyken.armourersWorkshop.client.render.ModRenderHelper;
 import riskyken.armourersWorkshop.client.skin.cache.ClientSkinCache;
 import riskyken.armourersWorkshop.common.skin.data.SkinPointer;
@@ -65,7 +65,7 @@ public class RenderItemEquipmentSkin implements IItemRenderer {
             GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
             ModRenderHelper.enableAlphaBlend();
             GL11.glEnable(GL11.GL_CULL_FACE);
-            ItemStackRenderHelper.renderItemAsArmourModel(stack, true);
+            SkinScaledRenderHelper.renderScaledSkinInBox(stack, 16, 16, true, false, true);
             GL11.glPopAttrib();
             mc.mcProfiler.endSection();
             GL11.glPopMatrix();

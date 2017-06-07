@@ -18,6 +18,7 @@ public class SkinLegsPartSkirt extends AbstractSkinPartTypeBase {
         this.guideSpace = new Rectangle3D(-4, -12, -2, 8, 12, 4);
       //Offset -1 to match old skin system.
         this.offset = new Point3D(0, -1, 20);
+        this.itemRenderOffset = new Point3D(0, 9, 0);
     }
 
     @Override

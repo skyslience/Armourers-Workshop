@@ -21,6 +21,7 @@ public class SkinFeetPartLeftFoot extends AbstractSkinPartTypeBase implements IS
         this.buildingSpace = new Rectangle3D(-8, -13, -8, 11, 5, 16);
         this.guideSpace = new Rectangle3D(-2, -12, -2, 4, 12, 4);
         this.offset = new Point3D(6, 0, 0);
+        this.itemRenderOffset = new Point3D(-2, 0, 0);
     }
     
     @Override
